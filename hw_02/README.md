@@ -5,29 +5,29 @@
   - Также, по заданию надо пункты выполнять через psql. Я могу это cделать через консоль без проблем, но мне просто удобнее это делать через GUI
 
 1. Через IDE подключаюсь к локальной базе и открываю две разные сессии из под пользователя postgres:
-   ![image_1](image.png)
+   ![images/image_1](images/image.png)
 2. Сделано в первом пункте
 3. Сделано в первом пункте
 4. Я создаю таблицу `table_1`, создаю хранимую процедуру, которая заполняет данными данную таблицу, далее вызываю данную хранимку
-   ![alt text](image-2.png)
+   ![alt text](images/image-2.png)
 5. По умолчанию стоит уровень изоляции `read commited`
-   ![alt text](image-3.png)
+   ![alt text](images/image-3.png)
 6. Просто начинаю две транзакции в обоих сессиях. Также в настройках сессии в DataGrip я выставил `Tx:Manual` вместо `Tx:Auto`, что бы я мог самостоятельно контролировать состояние транзакции
-   ![alt text](image-4.png)
+   ![alt text](images/image-4.png)
 7. Добавляю строку в таблицу в первой сессии
-   ![alt text](image-5.png)
+   ![alt text](images/image-5.png)
 8. Делаю запрос к таблице, что бы найти новую запись
-   ![alt text](image-6.png)
+   ![alt text](images/image-6.png)
 9. Нет, её нет. Потому что уровень изоляции выставлен `read commited`, а первая транзакция ещё не закомитилась. Мы могли бы её увидеть, если бы уровень исзоляции был `read uncomited`, и тогда мы бы увидели аномалию `dirty read`. Но в postgres нельзя выставить данный уровень изоляции.
-10. ![alt text](image-7.png)
-11. ![alt text](image-8.png)
+10. ![alt text](images/image-7.png)
+11. ![alt text](images/image-8.png)
 12. Да, потому что мы сделали комит в первой транзакции и теперь во второй сессии виден результат работы первой транзакции. Но это аномалия `unrepeatable read`: внутри одной транзакции результаты запросов к одной и той же таблице отличаются друг от друга.
-13. ![alt text](image-9.png)
+13. ![alt text](images/image-9.png)
 14. Устанавливаем уровень изоляции транзакции на `repeatable read` через GUI начинаю транзакцию:
-    ![alt text](image-16.png)
-15. ![alt text](image-18.png)
-16. ![alt text](image-19.png)
+    ![alt text](images/image-16.png)
+15. ![alt text](images/image-18.png)
+16. ![alt text](images/image-19.png)
 17. Нет, записи нет, по той же причине, по которой не было записи уровнем ниже. Аномалии `dirty read` нет на уровне `repeatable read`
-18. ![alt text](image-20.png)
-19. ![alt text](image-21.png)
+18. ![alt text](images/image-20.png)
+19. ![alt text](images/image-21.png)
 20. Нет, записи нет, потому что на уровне `repeatable read` нет аномалии `unrepeatable read`.
